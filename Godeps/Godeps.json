@@ -1,0 +1,17 @@
+{
+	"ImportPath": "github.com/Spalf/yapg_bot",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v62",
+	"Deps": [
+		{
+			"ImportPath": "github.com/go-telegram-bot-api/telegram-bot-api",
+			"Comment": "v1.0.0-24-g5c46b08",
+			"Rev": "5c46b08c56fd468151125f847c356a5338548c6a"
+		},
+		{
+			"ImportPath": "github.com/technoweenie/multipartstreamer",
+			"Comment": "v1.0.1",
+			"Rev": "a90a01d73ae432e2611d178c18367fbaa13e0154"
+		}
+	]
+}

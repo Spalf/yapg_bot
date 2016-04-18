@@ -1,0 +1,5 @@
+{
+  "name": "yapg_bot",
+  "description": "The password generator Telegram bot",
+  "image": "heroku/go:1.6"
+}
