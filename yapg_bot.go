@@ -24,15 +24,17 @@ func main() {
 	// bot.Debug = true
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
+	update := tgbotapi.NewUpdate(0)
+	update.Timeout = 60
+
 	for err == nil {
-		err = botman(bot)
+		err = botman(bot, update)
 	}
 	log.Fatal(err)
 }
 
-func botman(b *tgbotapi.BotAPI) error {
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+func botman(b *tgbotapi.BotAPI, u tgbotapi.UpdateConfig) error {
+
 	updates, err := b.GetUpdatesChan(u)
 	if err != nil {
 		return err
