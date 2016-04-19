@@ -24,10 +24,10 @@ func main() {
 	// bot.Debug = true
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	err = botman(bot)
-	if err != nil {
-		log.Fatal(err)
+	for err == nil {
+		err = botman(bot)
 	}
+	log.Fatal(err)
 }
 
 func botman(b *tgbotapi.BotAPI) error {
