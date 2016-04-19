@@ -44,6 +44,7 @@ const (
 const (
 	// ErrBadFileType happens when you pass an unknown type
 	ErrBadFileType = "bad file type"
+	ErrBadURL      = "bad or empty url"
 )
 
 // Chattable is any config type that can be sent.
@@ -151,6 +152,37 @@ func (file BaseFile) getFile() interface{} {
 // useExistingFile returns if the BaseFile has already been uploaded.
 func (file BaseFile) useExistingFile() bool {
 	return file.UseExisting
+}
+
+// BaseEdit is base type of all chat edits.
+type BaseEdit struct {
+	ChatID          int64
+	ChannelUsername string
+	MessageID       int
+	InlineMessageID string
+	ReplyMarkup     *InlineKeyboardMarkup
+}
+
+func (edit BaseEdit) values() (url.Values, error) {
+	v := url.Values{}
+
+	if edit.ChannelUsername != "" {
+		v.Add("chat_id", edit.ChannelUsername)
+	} else {
+		v.Add("chat_id", strconv.FormatInt(edit.ChatID, 10))
+	}
+	v.Add("message_id", strconv.Itoa(edit.MessageID))
+	v.Add("inline_message_id", edit.InlineMessageID)
+
+	if edit.ReplyMarkup != nil {
+		data, err := json.Marshal(edit.ReplyMarkup)
+		if err != nil {
+			return v, err
+		}
+		v.Add("reply_markup", string(data))
+	}
+
+	return v, nil
 }
 
 // MessageConfig contains information about a SendMessage request.
@@ -454,6 +486,56 @@ func (config LocationConfig) method() string {
 	return "sendLocation"
 }
 
+// VenueConfig contains information about a SendVenue request.
+type VenueConfig struct {
+	BaseChat
+	Latitude     float64 // required
+	Longitude    float64 // required
+	Title        string  // required
+	Address      string  // required
+	FoursquareID string
+}
+
+func (config VenueConfig) values() (url.Values, error) {
+	v, _ := config.BaseChat.values()
+
+	v.Add("latitude", strconv.FormatFloat(config.Latitude, 'f', 6, 64))
+	v.Add("longitude", strconv.FormatFloat(config.Longitude, 'f', 6, 64))
+	v.Add("title", config.Title)
+	v.Add("address", config.Address)
+	if config.FoursquareID != "" {
+		v.Add("foursquare_id", config.FoursquareID)
+	}
+
+	return v, nil
+}
+
+func (config VenueConfig) method() string {
+	return "sendVenue"
+}
+
+// ContactConfig allows you to send a contact.
+type ContactConfig struct {
+	BaseChat
+	PhoneNumber string
+	FirstName   string
+	LastName    string
+}
+
+func (config ContactConfig) values() (url.Values, error) {
+	v, _ := config.BaseChat.values()
+
+	v.Add("phone_number", config.PhoneNumber)
+	v.Add("first_name", config.FirstName)
+	v.Add("last_name", config.LastName)
+
+	return v, nil
+}
+
+func (config ContactConfig) method() string {
+	return "sendContact"
+}
+
 // ChatActionConfig contains information about a SendChatAction request.
 type ChatActionConfig struct {
 	BaseChat
@@ -470,6 +552,63 @@ func (config ChatActionConfig) values() (url.Values, error) {
 // method returns Telegram API method name for sending ChatAction.
 func (config ChatActionConfig) method() string {
 	return "sendChatAction"
+}
+
+// EditMessageTextConfig allows you to modify the text in a message.
+type EditMessageTextConfig struct {
+	BaseEdit
+	Text                  string
+	ParseMode             string
+	DisableWebPagePreview bool
+	ReplyMarkup           *InlineKeyboardMarkup
+}
+
+func (config EditMessageTextConfig) values() (url.Values, error) {
+	v, _ := config.BaseEdit.values()
+
+	v.Add("text", config.Text)
+	v.Add("parse_mode", config.ParseMode)
+	v.Add("disable_web_page_preview", strconv.FormatBool(config.DisableWebPagePreview))
+
+	return v, nil
+}
+
+func (config EditMessageTextConfig) method() string {
+	return "editMessageText"
+}
+
+// EditMessageCaptionConfig allows you to modify the caption of a message.
+type EditMessageCaptionConfig struct {
+	BaseEdit
+	Caption     string
+	ReplyMarkup *InlineKeyboardMarkup
+}
+
+func (config EditMessageCaptionConfig) values() (url.Values, error) {
+	v, _ := config.BaseEdit.values()
+
+	v.Add("caption", config.Caption)
+
+	return v, nil
+}
+
+func (config EditMessageCaptionConfig) method() string {
+	return "editMessageCaption"
+}
+
+// EditMessageReplyMarkupConfig allows you to modify the reply markup
+// of a message.
+type EditMessageReplyMarkupConfig struct {
+	BaseEdit
+	ReplyMarkup *InlineKeyboardMarkup
+}
+
+func (config EditMessageReplyMarkupConfig) values() (url.Values, error) {
+	return config.BaseEdit.values()
+}
+
+func (config EditMessageReplyMarkupConfig) method() string {
+	return "editMessageReplyMarkup"
 }
 
 // UserProfilePhotosConfig contains information about a
@@ -516,9 +655,26 @@ type FileReader struct {
 
 // InlineConfig contains information on making an InlineQuery response.
 type InlineConfig struct {
-	InlineQueryID string        `json:"inline_query_id"`
-	Results       []interface{} `json:"results"`
-	CacheTime     int           `json:"cache_time"`
-	IsPersonal    bool          `json:"is_personal"`
-	NextOffset    string        `json:"next_offset"`
+	InlineQueryID     string        `json:"inline_query_id"`
+	Results           []interface{} `json:"results"`
+	CacheTime         int           `json:"cache_time"`
+	IsPersonal        bool          `json:"is_personal"`
+	NextOffset        string        `json:"next_offset"`
+	SwitchPMText      string        `json:"switch_pm_text"`
+	SwitchPMParameter string        `json:"switch_pm_parameter"`
+}
+
+// CallbackConfig contains information on making a CallbackQuery response.
+type CallbackConfig struct {
+	CallbackQueryID string `json:"callback_query_id"`
+	Text            string `json:"text"`
+	ShowAlert       bool   `json:"show_alert"`
+}
+
+// ChatMemberConfig contains information about a user in a chat for use
+// with administrative functions such as kicking or unbanning a user.
+type ChatMemberConfig struct {
+	ChatID             int64
+	SuperGroupUsername string
+	UserID             int
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/rand"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"gopkg.in/telegram-bot-api.v4"
 	"log"
 	"os"
 	"strings"
@@ -27,18 +27,25 @@ func main() {
 	update := tgbotapi.NewUpdate(0)
 	update.Timeout = 60
 
-	for err == nil {
-		err = botman(bot, update)
+	err = botman(bot, update)
+	if err != nil {
+		log.Fatal(err)
 	}
-	log.Fatal(err)
 }
 
 func botman(b *tgbotapi.BotAPI, u tgbotapi.UpdateConfig) error {
+
+	const defaultMessage = `Choose your destiny!`
+
+	keyboard := tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton(`/easy`),
+		tgbotapi.NewKeyboardButton(`/hard`))
 
 	updates, err := b.GetUpdatesChan(u)
 	if err != nil {
 		return err
 	}
+
 	for update := range updates {
 
 		chatID := update.Message.Chat.ID
@@ -48,6 +55,18 @@ func botman(b *tgbotapi.BotAPI, u tgbotapi.UpdateConfig) error {
 		}
 
 		switch text {
+		case "/start":
+			{
+				msg := tgbotapi.NewMessage(chatID, defaultMessage)
+				msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(keyboard)
+				b.Send(msg)
+			}
+		case "/stop":
+			{
+				msg := tgbotapi.NewMessage(chatID, `SeeYa!`)
+				msg.ReplyMarkup = tgbotapi.ReplyKeyboardHide{HideKeyboard: true}
+				b.Send(msg)
+			}
 		case "/easy":
 			{
 				msg := tgbotapi.NewMessage(chatID, genPass(10))
@@ -60,7 +79,7 @@ func botman(b *tgbotapi.BotAPI, u tgbotapi.UpdateConfig) error {
 			}
 		default:
 			{
-				msg := tgbotapi.NewMessage(chatID, "WAT")
+				msg := tgbotapi.NewMessage(chatID, defaultMessage)
 				b.Send(msg)
 			}
 		}

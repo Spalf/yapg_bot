@@ -4,14 +4,14 @@
 	"GodepVersion": "v62",
 	"Deps": [
 		{
-			"ImportPath": "github.com/go-telegram-bot-api/telegram-bot-api",
-			"Comment": "v1.0.0-24-g5c46b08",
-			"Rev": "5c46b08c56fd468151125f847c356a5338548c6a"
-		},
-		{
 			"ImportPath": "github.com/technoweenie/multipartstreamer",
 			"Comment": "v1.0.1",
 			"Rev": "a90a01d73ae432e2611d178c18367fbaa13e0154"
+		},
+		{
+			"ImportPath": "gopkg.in/telegram-bot-api.v4",
+			"Comment": "v4.1.0",
+			"Rev": "a2483eb98b4c06e05105e15642e1dff45af5fafa"
 		}
 	]
 }
