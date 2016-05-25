@@ -1,2 +1,2 @@
 # yapg_bot
-The simple, heroku-ready password generator for Telegram.
+Simple, heroku-ready password generator-bot for Telegram.

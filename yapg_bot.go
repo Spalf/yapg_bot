@@ -2,17 +2,19 @@ package main
 
 import (
 	"crypto/rand"
-	"gopkg.in/telegram-bot-api.v4"
 	"log"
 	"os"
 	"strings"
+
+	tgbotapi "gopkg.in/telegram-bot-api.v4"
 )
 
 const (
-	numbers    string = `23456789`
-	characters string = `ABCDEFGHJKLMNPRSTUVWXYZabcdefghikmnopqrstuvwxyz`
-	dictionary string = numbers + characters
-	dicLen     int    = len(dictionary)
+	numbers     string = `23456789`
+	uCaseLetter string = `ABCDEFGHJKLMNPRSTUVWXYZ`
+	lCaseLetter string = `abcdefghikmnopqrstuvwxyz`
+	dictionary  string = numbers + uCaseLetter + lCaseLetter
+	dicLen      int    = len(dictionary)
 )
 
 func main() {
@@ -34,7 +36,6 @@ func main() {
 }
 
 func botman(b *tgbotapi.BotAPI, u tgbotapi.UpdateConfig) error {
-
 	const defaultMessage = `Choose your destiny!`
 
 	keyboard := tgbotapi.NewKeyboardButtonRow(
