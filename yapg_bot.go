@@ -93,7 +93,7 @@ func genPass(level byte) string {
 	bytes := make([]byte, level)
 	rand.Read(bytes)
 
-	result := ""
+	var result string
 	for strings.ContainsAny(result, numbers) == false {
 		for i, b := range bytes {
 			bytes[i] = dictionary[b%byte(dicLen)]
