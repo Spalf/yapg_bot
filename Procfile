@@ -1,1 +1,1 @@
-worker: yapg_bot
+worker: yapgBot
