@@ -1,7 +1,7 @@
 {
-	"ImportPath": "github.com/Spalf/yapg_bot",
-	"GoVersion": "go1.6",
-	"GodepVersion": "v62",
+	"ImportPath": "github.com/Spalf/yapgBot",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v74",
 	"Deps": [
 		{
 			"ImportPath": "github.com/technoweenie/multipartstreamer",
