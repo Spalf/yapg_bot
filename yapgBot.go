@@ -89,16 +89,23 @@ func botman(b *tgbotapi.BotAPI, u tgbotapi.UpdateConfig) error {
 }
 
 func genPass(level byte) string {
-
 	bytes := make([]byte, level)
 	rand.Read(bytes)
 
 	var result string
-	for strings.ContainsAny(result, numbers) && strings.ContainsAny(result, lCaseLetter) && strings.ContainsAny(result, uCaseLetter) == false {
+	for checkPass(result) == false {
 		for i, b := range bytes {
 			bytes[i] = dictionary[b%byte(dicLen)]
+			log.Printf("b = %v, bytes[i] = %v or %s", b, bytes[i], string(bytes[i]))
 		}
 		result = string(bytes)
 	}
 	return result
+}
+
+func checkPass(result string) (b bool) {
+	b = strings.ContainsAny(result, numbers)
+	b = b && strings.ContainsAny(result, uCaseLetter)
+	b = b && strings.ContainsAny(result, lCaseLetter)
+	return
 }
